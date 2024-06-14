@@ -1,0 +1,9 @@
+# Configuration file (02/02/24 10:42:40.179)
+
+# Server configuration
+Ice.Admin.ServerId=IceStorm
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=IceStorm
+IceBox.Service.IceStorm=IceStormService,37:createIceStorm --Ice.Config='/home/rkdop/Desktop/ssdd-urfs-fernandezlopez-lopezparedes-main/data/db/node1/servers/IceStorm/config/config_IceStorm'
+IceBox.LoadOrder=IceStorm
+Ice.Default.Locator=IceGrid/Locator -t:tcp -h 127.0.0.1 -p 9091

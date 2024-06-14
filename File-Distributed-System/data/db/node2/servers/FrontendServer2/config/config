@@ -1,0 +1,22 @@
+# Configuration file (02/02/24 10:42:41.105)
+
+# Server configuration
+Ice.Admin.ServerId=FrontendServer2
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=FrontendServer2
+# Object adapter FileUpdatesAdapter
+FileUpdatesAdapter.Endpoints=default
+FileUpdatesAdapter.AdapterId=FrontendServer2.FileUpdatesAdapter2
+# Object adapter FrontendAdapter
+FrontendAdapter.Endpoints=default
+FrontendAdapter.AdapterId=FrontendServer2.FrontendAdapter2
+FrontendAdapter.ReplicaGroupId=ReplicatedFrontendAdapter
+# Object adapter FrontendUpdatesAdapter
+FrontendUpdatesAdapter.Endpoints=default
+FrontendUpdatesAdapter.AdapterId=FrontendServer2.FrontendUpdatesAdapter2
+# Server descriptor properties
+Identity=frontend2
+Ice.StdOut=/home/rkdop/Desktop/ssdd-urfs-fernandezlopez-lopezparedes-main/data/db/node2/distrib/URFSApp/server-out.txt
+Ice.ProgramName=FrontendServer2.Frontend2
+Identity=frontend
+Ice.Default.Locator=IceGrid/Locator -t:tcp -h 127.0.0.1 -p 9091

@@ -1,0 +1,14 @@
+# Configuration file (02/02/24 10:42:42.173)
+
+# Server configuration
+Ice.Admin.ServerId=FileManagerServer2
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=FileManagerServer2
+# Object adapter FileManagerAdapter
+FileManagerAdapter.Endpoints=default
+FileManagerAdapter.AdapterId=FileManagerServer2.FileManagerAdapter
+# Server descriptor properties
+Identity=FileManager2
+Ice.StdOut=/home/rkdop/Desktop/ssdd-urfs-fernandezlopez-lopezparedes-main/data/db/node3/distrib/URFSApp/server-out.txt
+Ice.ProgramName=FileManagerServer2.FileManager2
+Ice.Default.Locator=IceGrid/Locator -t:tcp -h 127.0.0.1 -p 9091

@@ -1,0 +1,13 @@
+# Configuration file (02/02/24 10:42:40.180)
+
+# Server configuration
+Ice.Admin.ServerId=URFSApp.IcePatch2
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=URFSApp.IcePatch2
+# Object adapter IcePatch2
+IcePatch2.Endpoints=default
+IcePatch2.AdapterId=URFSApp.IcePatch2.IcePatch2
+# Server descriptor properties
+IcePatch2.InstanceName=URFSApp.IcePatch2
+IcePatch2.Directory=data/URFS
+Ice.Default.Locator=IceGrid/Locator -t:tcp -h 127.0.0.1 -p 9091

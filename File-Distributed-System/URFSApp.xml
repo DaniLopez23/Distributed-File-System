@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file was written by IceGrid GUI -->
+<icegrid>
+   <application name="URFSApp">
+      <distrib icepatch="${application}.IcePatch2/server"/>
+      <service-template id="IceStorm">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="1000"/>
+         <service name="${instance-name}" entry="IceStormService,37:createIceStorm">
+            <properties>
+               <property name="${service}.LMDB.Path" value="${service.data}"/>
+               <property name="${service}.InstanceName" value="${instance-name}"/>
+               <property name="${service}.Flush.Timeout" value="${flush-timeout}"/>
+            </properties>
+            <adapter name="${service}.Publish" endpoints="${publish-endpoints}" id="${instance-name}.Publish"/>
+            <adapter name="${service}.TopicManager" endpoints="${topic-manager-endpoints}" id="${instance-name}.TopicManager">
+               <object identity="${instance-name}/TopicManager" type="::IceStorm::TopicManager"/>
+            </adapter>
+         </service>
+      </service-template>
+      <service-template id="IceStorm-HA">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="node-id"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="node-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="1000"/>
+         <parameter name="publish-replica-group"/>
+         <parameter name="topic-manager-replica-group"/>
+         <service name="${instance-name}${node-id}" entry="IceStormService,37:createIceStorm">
+            <properties>
+               <property name="${service}.LMDB.Path" value="${service.data}"/>
+               <property name="${service}.InstanceName" value="${instance-name}"/>
+               <property name="${service}.NodeId" value="${node-id}"/>
+               <property name="${service}.Flush.Timeout" value="${flush-timeout}"/>
+            </properties>
+            <adapter name="${service}.Node" endpoints="${node-endpoints}" id="${instance-name}${node-id}.Node"/>
+            <adapter name="${service}.Publish" endpoints="${publish-endpoints}" id="${instance-name}${node-id}.Publish" replica-group="${publish-replica-group}"/>
+            <adapter name="${service}.TopicManager" endpoints="${topic-manager-endpoints}" id="${instance-name}${node-id}.TopicManager" replica-group="${topic-manager-replica-group}"/>
+         </service>
+      </service-template>
+      <server-template id="FileManagerServer">
+         <parameter name="index"/>
+         <server id="FileManagerServer${index}" activation="always" exe="./FileManager.py" pwd="${application.distrib}">
+            <properties>
+               <property name="Ice.StdOut" value="${application.distrib}/server-out.txt"/>
+               <property name="Ice.ProgramName" value="${server}.FileManager${index}"/>
+            </properties>
+            <adapter name="FileManagerAdapter" endpoints="default" id="${server}.FileManagerAdapter">
+               <object identity="FileManager${index}" type="::URFS::FileManager" property="Identity"/>
+            </adapter>
+         </server>
+      </server-template>
+      <server-template id="FrontendServer">
+         <parameter name="index"/>
+         <server id="FrontendServer${index}" activation="on-demand" exe="./Frontend.py" pwd="${application.distrib}">
+            <properties>
+               <property name="Ice.StdOut" value="${application.distrib}/server-out.txt"/>
+               <property name="Ice.ProgramName" value="${server}.Frontend${index}"/>
+               <property name="Identity" value="frontend"/>
+            </properties>
+            <adapter name="FileUpdatesAdapter" endpoints="default" id="${server}.FileUpdatesAdapter${index}">
+               <object identity="FileUpdatesAdapter${index}" type="::URFS::FileUpdates"/>
+            </adapter>
+            <adapter name="FrontendAdapter" endpoints="default" id="${server}.FrontendAdapter${index}" replica-group="ReplicatedFrontendAdapter">
+               <object identity="frontend${index}" type="::URFS::Frontend" property="Identity"/>
+            </adapter>
+            <adapter name="FrontendUpdatesAdapter" endpoints="default" id="${server}.FrontendUpdatesAdapter${index}">
+               <object identity="FrontendUpdatesAdapter${index}" type="::URFS::FrontendUpdates"/>
+            </adapter>
+         </server>
+      </server-template>
+      <server-template id="Glacier2">
+         <parameter name="instance-name" default="${application}.Glacier2"/>
+         <parameter name="client-endpoints"/>
+         <parameter name="server-endpoints" default=""/>
+         <parameter name="session-timeout" default="0"/>
+         <server id="${instance-name}" activation="always" exe="glacier2router">
+            <properties>
+               <property name="Glacier2.Client.Endpoints" value="${client-endpoints}"/>
+               <property name="Glacier2.Server.Endpoints" value="${server-endpoints}"/>
+               <property name="Glacier2.InstanceName" value="${instance-name}"/>
+               <property name="Glacier2.SessionTimeout" value="${session-timeout}"/>
+            </properties>
+         </server>
+      </server-template>
+      <server-template id="IcePatch2">
+         <parameter name="instance-name" default="${application}.IcePatch2"/>
+         <parameter name="endpoints" default="default"/>
+         <parameter name="directory"/>
+         <server id="${instance-name}" activation="on-demand" application-distrib="false" exe="icepatch2server">
+            <properties>
+               <property name="IcePatch2.InstanceName" value="${instance-name}"/>
+               <property name="IcePatch2.Directory" value="${directory}"/>
+            </properties>
+            <adapter name="IcePatch2" endpoints="${endpoints}" id="${server}.IcePatch2">
+               <object identity="${instance-name}/server" type="::IcePatch2::FileServer"/>
+            </adapter>
+         </server>
+      </server-template>
+      <server-template id="IceStorm">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="1000"/>
+         <icebox id="${instance-name}" activation="always" exe="icebox">
+            <service-instance template="IceStorm" instance-name="${instance-name}" topic-manager-endpoints="${topic-manager-endpoints}" publish-endpoints="${publish-endpoints}" flush-timeout="${flush-timeout}"/>
+         </icebox>
+      </server-template>
+      <server-template id="IceStorm-HA">
+         <parameter name="instance-name" default="${application}.IceStorm"/>
+         <parameter name="node-id"/>
+         <parameter name="topic-manager-endpoints" default="default"/>
+         <parameter name="publish-endpoints" default="default"/>
+         <parameter name="node-endpoints" default="default"/>
+         <parameter name="flush-timeout" default="1000"/>
+         <parameter name="publish-replica-group"/>
+         <parameter name="topic-manager-replica-group"/>
+         <icebox id="${instance-name}${node-id}" activation="on-demand" exe="icebox">
+            <service-instance template="IceStorm-HA" instance-name="${instance-name}" node-id="${node-id}" topic-manager-endpoints="${topic-manager-endpoints}" publish-endpoints="${publish-endpoints}" node-endpoints="${node-endpoints}" flush-timeout="${flush-timeout}" publish-replica-group="${publish-replica-group}" topic-manager-replica-group="${topic-manager-replica-group}"/>
+         </icebox>
+      </server-template>
+      <replica-group id="ReplicatedFrontendAdapter">
+         <load-balancing type="random" n-replicas="0"/>
+         <object identity="frontend" type="::URFS::Frontend"/>
+      </replica-group>
+      <node name="node1">
+         <description>Contiene binder, IcePatch2, icestorm servers</description>
+         <server-instance template="IceStorm" instance-name="IceStorm" topic-manager-endpoints="tcp -h localhost -p 10000" publish-endpoints="tcp -p 2000"/>
+         <server-instance template="IcePatch2" directory="data/URFS"/>
+      </node>
+      <node name="node2">
+         <description>Aloja tres servidores Frontend, definidos mediante una plantilla. Estos servidores
+deberán pertenecer a un grupo de réplica alcanzable por medio del identificador frontend</description>
+         <server-instance template="FrontendServer" index="1"/>
+         <server-instance template="FrontendServer" index="2"/>
+         <server-instance template="FrontendServer" index="3"/>
+      </node>
+      <node name="node3">
+         <description>Aloja dos servidores FileManager, definidos mediante una plantilla. Sus proxies
+indirectos serán conocidos por los Frontend</description>
+         <server-instance template="FileManagerServer" index="1"/>
+         <server-instance template="FileManagerServer" index="2"/>
+      </node>
+   </application>
+</icegrid>
